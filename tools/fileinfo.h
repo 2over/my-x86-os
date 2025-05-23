@@ -4,4 +4,4 @@ typedef struct {
     char*   content;
 }Fileinfo;
 
-Fileinfo read_file(const char* filename);
+Fileinfo* read_file(const char* filename);
