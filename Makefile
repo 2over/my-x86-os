@@ -15,11 +15,11 @@ ${BUILD}/boot/%.o: oskernel/boot/%.asm
 clean:
 	$(shell rm -rf ${BUILD})
 
-bochs:
+bochs: all
 	bochs -q -f bochsrc
 
-qemug:
-	qemu-system-x86_64 -fda a.img -S -s
+qemug: all
+	qemu-system-x86_64 -hda hd.img -S -s
 
-qemu:
-	qemu-system-x86_64 -fda a.img
+qemu: all
+	qemu-system-x86_64 -hda hd.img

@@ -16,7 +16,7 @@ _start:
     mov     si, msg
     call    print
 
-    jmp $
+    jmp      $
 
 ; 如何调用
 ; mov       si, msg ; 1 传入字符串
