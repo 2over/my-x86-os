@@ -30,7 +30,8 @@ _start:
 
     xchg    bx, bx
 
-    jmp     BOOT_MAIN_ADDR
+;    jmp     BOOT_MAIN_ADDR
+    jmp $
 
 read_floppy_error:
     mov     si, read_floppy_error_msg
