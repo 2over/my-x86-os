@@ -20,7 +20,7 @@ out_byte:
     mov ebp, esp
 
     mov edx, [ebp + 8]  ; port
-    mov eax, [ebp + 8]  ; value
+    mov eax, [ebp + 12]  ; value
 
     out dx, al
 
@@ -45,7 +45,7 @@ out_word:
     push ebp;
     mov ebp, esp
 
-    mov edx. [ebp + 8]  ; port
+    mov edx, [ebp + 8]  ; port
     mov eax, [ebp + 12] ; value
 
     out dx, ax

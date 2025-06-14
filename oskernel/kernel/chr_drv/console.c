@@ -35,9 +35,16 @@ static uint x, y;   // 当前光标的坐标
 
 // 设置当前显示器开始的位置
 static void set_screen() {
-    out_byte(CRT_ADDR_REG,  CRT_START_ADDR_H);
-    out_byte(CRT_DATA_REG,  ((screen - MEM_BASE) >> 9) & 0xff);
-    out_byte(CRT_DATA_REG,  CRT_START_ADDR_L);
+    out_byte(CRT_ADDR_REG, CRT_START_ADDR_H);
+    out_byte(CRT_DATA_REG, ((screen - MEM_BASE) >> 9) & 0xff);
+    out_byte(CRT_ADDR_REG, CRT_START_ADDR_L);
+    out_byte(CRT_DATA_REG, ((screen - MEM_BASE) >> 1) & 0xff);
+}
+
+static void set_cursor() {
+    out_byte(CRT_ADDR_REG,  CRT_CURSOR_H);
+    out_byte(CRT_DATA_REG,  ((pos - MEM_BASE) >> 9) & 0xff);
+    out_byte(CRT_ADDR_REG,  CRT_CURSOR_L);
     out_byte(CRT_DATA_REG,  ((pos - MEM_BASE) >> 1) & 0xff);
 }
 
@@ -48,7 +55,7 @@ void console_clear() {
     set_cursor();
     set_screen();
 
-    u16 *ptr = (u16 *)MEM_BASE;
+    u16 *ptr = (u16 *) MEM_BASE;
     while (ptr < MEM_END) {
         *ptr++ = 0x0720;
     }
@@ -57,9 +64,9 @@ void console_clear() {
 // 向上滚屏
 static void scroll_up() {
     if (screen + SCR_SIZE + ROW_SIZE < MEM_END) {
-        u32 *ptr = (u32 *)(screen + SCR_SIZE);
+        u32 *ptr = (u32 *) (screen + SCR_SIZE);
         for (size_t i = 0; i < WIDTH; i++) {
-            *ptr++ 0x0720;
+            *ptr++ = 0x0720;
         }
 
         screen += ROW_SIZE;
@@ -92,17 +99,17 @@ static void command_bs() {
     if (x) {
         x--;
         pos -= 2;
-        *(u16*)pos = 0x0720;
+        *(u16 *) pos = 0x0720;
     }
 }
 
 static void command_del() {
-    *(u16*)pos = 0x0720;
+    *(u16 *) pos = 0x0720;
 }
 
 void console_write(char *buf, u32 count) {
     char ch;
-    char *ptr = (char*)pos;
+    char *ptr = (char *) pos;
     while (count--) {
         ch = *buf++;
         switch (ch) {
@@ -128,7 +135,7 @@ void console_write(char *buf, u32 count) {
                 command_del();
                 break;
             default:
-                if(x >= WIDTH) {
+                if (x >= WIDTH) {
                     x -= WIDTH;
                     pos -= ROW_SIZE;
                     command_lf();

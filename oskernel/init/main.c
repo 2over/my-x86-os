@@ -6,7 +6,7 @@
 void kernel_main(void) {
     console_init();
 
-    char* s = "cover";
+    char *s = "cover22222222222222";
     console_write(s, strlen(s));
-    while(true);
+    while (true);
 }
