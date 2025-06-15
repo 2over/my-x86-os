@@ -7,8 +7,12 @@ KERNEL_ADDR equ 0x1200
 SEG_BASE equ 0
 SEG_LIMIT equ 0xfffff
 
+B8000_SEG_BASE equ 0xb8000
+B8000_SEG_LIMIT equ 0x7fff
+
 CODE_SELECTOR equ (1 << 3)
 DATA_SELECTOR equ (2 << 3)
+B8000_SELECTOR equ (3 << 3)
 
 gdt_base:
     dd 0, 0
@@ -29,7 +33,7 @@ gdt_code:
     ;   P_DPL_S_TYPE
     db 0b1_00_1_1000
     ;   G_DB_AVL_LIMIT
-    db 0b0_1_00_0000 | (SEG_LIMIT >> 16 & 0xf)
+    db 0b1_1_00_0000 | (SEG_LIMIT >> 16 & 0xf)
     db SEG_BASE >> 24 & 0xf
 
 gdt_data:
@@ -43,6 +47,15 @@ gdt_data:
     db 0b1_1_00_0000 | (SEG_LIMIT >> 16 & 0xf)
     db SEG_BASE >> 24 & 0xf
 
+gdt_b8000:
+    dw B8000_SEG_LIMIT & 0xffff
+    dw B8000_SEG_BASE & 0xffff
+    db B8000_SEG_BASE >> 16 & 0xff
+    ; P_DPL_S_TYPE
+    db 0b1_00_1_0010
+    ; G_DB_AVL_LIMIT
+    db 0b0_1_00_0000 | (B8000_SEG_LIMIT >> 16 & 0xf)
+    db B8000_SEG_BASE >> 24 & 0xf
 gdt_ptr:
     dw $ - gdt_base - 1
     dd gdt_base
