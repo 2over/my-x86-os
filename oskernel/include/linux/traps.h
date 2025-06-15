@@ -8,4 +8,5 @@
 #include "head.h"
 
 void gdt_init();
+void idt_init();
 #endif //MY_X86_OS_TRAPS_H
