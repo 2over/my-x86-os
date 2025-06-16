@@ -11,7 +11,7 @@
 #define CRT_CURSOR_L 0xF        // 光标位置 - 低位
 
 #define MEM_BASE 0xB8000                // 显卡内存起始位置
-#define MEM_SIZE 0x40000                // 显卡内存大小
+#define MEM_SIZE 0x4000                // 显卡内存大小
 #define MEM_END (MEM_BASE + MEM_SIZE)    // 显卡内存结束位置
 #define WIDTH 80                        // 屏幕文本列数
 #define HEIGHT 25                       // 屏幕文本行数
@@ -70,7 +70,7 @@ static void scroll_up() {
         }
 
         screen += ROW_SIZE;
-        pos + ROW_SIZE;
+        pos += ROW_SIZE;
     } else {
         memcpy(MEM_BASE, screen, SCR_SIZE);
         pos -= (screen - MEM_BASE);
@@ -116,6 +116,9 @@ void console_write(char *buf, u32 count) {
             case ASCII_NULL:
                 break;
             case ASCII_BEL:
+                break;
+            case ASCII_BS:
+                command_bs();
                 break;
             case ASCII_HT:
                 break;
