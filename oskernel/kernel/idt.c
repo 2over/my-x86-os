@@ -9,8 +9,12 @@ interrupt_gate_t  interrupt_table[INTERRUPT_TABLE_SIZE] = {0};
 //char idt_ptr[6] = {0};
 
 xdt_ptr_t  idt_ptr;
-extern void interrupt_handler();
+//extern void interrupt_handler();
 extern void keymap_handler_entry();
+extern void interrupt_handler_entry();
+
+// 是在汇编中定义的
+extern int interrupt_handler_table[0x2f];
 
 void idt_init() {
 
@@ -20,7 +24,11 @@ void idt_init() {
 
         interrupt_gate_t* p = &interrupt_table[i];
 
-        int handler = interrupt_handler;
+        int handler = (int)interrupt_handler_entry;
+
+        if (i <= 0x15) {
+            handler = (int)interrupt_handler_table[i];
+        }
         if (0x21 == i) {
             handler = keymap_handler_entry;
         }
