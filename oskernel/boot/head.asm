@@ -37,12 +37,12 @@ _start:
 
 ; 屏幕所有中断，只接收键盘中断
 .enable_8259a_main:
-    mov al, 1111_1100b;
+    mov al, 1111_1111b;
     out 21h, al
 
 ; 屏蔽从芯片所有中断响应
 .disable_8259a_slave:
-    mov al, 1111_1111b
+    mov al, 11111111b
     out 0A1h, al
 
 

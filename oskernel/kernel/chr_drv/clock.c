@@ -5,7 +5,7 @@
 #define PIT_CHAN2_REG 0X42
 #define PIT_CTRL_REG 0X43
 
-#define HZ 100
+#define HZ 10000
 #define OSCILLATOR 1193182
 #define CLOCK_COUNTER (OSCILLATOR / HZ)
 
