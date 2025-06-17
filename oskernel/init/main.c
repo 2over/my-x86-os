@@ -1,6 +1,7 @@
 #include "../include/linux/tty.h"
 #include "../include/linux/kernel.h"
 #include "../include/string.h"
+#include "../include/linux/mm.h"
 
 extern void clock_init();
 
@@ -10,6 +11,8 @@ void kernel_main(void) {
     idt_init();
     clock_init();
     printk("cover os cool\n");
+
+    print_check_memory_info();
     __asm__ ("sti;");
 
 //    int i = 10/ 0;
