@@ -13,6 +13,9 @@ void kernel_main(void) {
     printk("cover os cool\n");
 
     print_check_memory_info();
+
+    memory_init();
+    memory_map_int();
     __asm__ ("sti;");
 
 //    int i = 10/ 0;
