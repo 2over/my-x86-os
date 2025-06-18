@@ -42,9 +42,14 @@ void print_check_memory_info();
 void memory_init();
 void memory_map_int();
 
-void virtual_memory_init();
+void* virtual_memory_init();
 
+// 分配、释放物理内存
 void* get_free_page();
 
 void free_page(void* p);
+
+// 分配、释放虚拟内存
+void* kmalloc(size_t size);
+
 #endif //MY_X86_OS_MM_H
