@@ -52,4 +52,6 @@ void free_page(void* p);
 // 分配、释放虚拟内存
 void* kmalloc(size_t size);
 
+void kfree_s(void* obj, int size);
+
 #endif //MY_X86_OS_MM_H

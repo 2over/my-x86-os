@@ -58,11 +58,7 @@ void* virtual_memory_init() {
 
     BOCHS_DEBUG_MAGIC
 
-    printk("pdt addr %p\n", pdt);
+    printk("pdt addr: %p\n", pdt);
 
     return pdt;
-}
-
-void* kmalloc(size_t size) {
-
 }
