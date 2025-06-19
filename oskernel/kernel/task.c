@@ -65,32 +65,32 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
 }
 
 void* t1_fun(void* arg) {
-    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t1: %d\n", i);
+//    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t1: %d\n", 1);
         task_sleep(1000);
-    }
+//    }
 }
 
 void* t2_fun(void* arg) {
-    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t2: %d\n", i);
+//    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t2: %d\n",2);
         task_sleep(500);
 
-    }
+//    }
 }
 
 void* t3_fun(void* arg) {
-    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t3: %d\n", i);
+//    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t3: %d\n", 3);
 
         task_sleep(300);
 
-    }
+//    }
 }
 
 
 void* idle(void* arg) {
-    create_task("t1", t1_fun, 1);
+    create_task("t1", t1_fun, 4);
     create_task("t2", t2_fun, 2);
     create_task("t3", t3_fun, 3);
 
