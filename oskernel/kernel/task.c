@@ -1,10 +1,20 @@
 #include "../include/linux/kernel.h"
 #include "../include/linux/task.h"
 #include "../include/linux/mm.h"
+#include "../include/linux/sched.h"
+#include "../include/string.h"
+
+extern void move_to_user_mode();
+extern void sched_task();
+
+extern int* g_task0_pdt;
+extern task_t* current;
+extern int jiffy;
+extern int cpu_tickes;
 
 task_t* tasks[NR_TASKS] = {0};
 
-static int find_empty_process() {
+int find_empty_process() {
     int ret = 0;
 
     bool is_finded = false;
@@ -27,22 +37,56 @@ static int find_empty_process() {
     return ret;
 }
 
-task_t* create_task(char* name, task_fun_t fun) {
-    task_union_t* task = (task_union_t*)get_free_page();
+task_t* create_task(char* name, task_fun_t fun, int priority) {
+    task_union_t* task = (task_union_t*)kmalloc(4096);
     memset(task, 0, PAGE_SIZE);
 
     task->task.pid = find_empty_process();
+    tasks[task->task.pid] = (NULL == current) ? 0 : current->pid;
+
+    task->task.scheduling_times = 0;
+    strcpy(task->task.name, name);
+
+    // 加入tasks
     tasks[task->task.pid] = &(task->task);
 
-    task->task.cr3 = virtual_memory_init();
+    task->task.tss.cr3 = (int)task + sizeof(task_t);
+    task->task.tss.eip = fun;
+
+    // r0 stack
+    task->task.esp0 = (int)task + PAGE_SIZE;
+    task->task.ebp0 = task->task.esp0;
+
+    task->task.tss.esp0 = task->task.esp0;
+
+    task->task.state = TASK_READY;
 
     return task;
 }
 
 void* idle(void* arg) {
+    printk("#1 idle task running...\n");
 
+    while (true) {
+        printk("#2 idle task running....\n");
+
+        __asm__ volatile ("sti;");
+        __asm__ volatile ("hlt;");
+    }
 }
 
 void task_init() {
-    create_task("idle", idle);
+    create_task("idle", idle, 1);
+}
+
+int inc_scheduling_times(task_t* task) {
+    return task->scheduling_times++;
+}
+
+pid_t get_task_pid(task_t* task) {
+    return task->pid;
+}
+
+pid_t get_task_ppid(task_t* task) {
+    return task->ppid;
 }
