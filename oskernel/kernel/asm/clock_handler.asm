@@ -4,7 +4,10 @@
 extern printk
 extern clock_handler
 extern current
-
+; ecx
+; eip
+; cs
+; eflags
 global clock_handler_entry
 clock_handler_entry:
     push ecx

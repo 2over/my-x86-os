@@ -41,6 +41,8 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
     task->task.pid = find_empty_process();
     tasks[task->task.pid] = (NULL == current) ? 0 : current->pid;
 
+    task->task.priority = priority;
+    task->task.counter = priority;
     task->task.scheduling_times = 0;
     strcpy(task->task.name, name);
 
@@ -85,8 +87,8 @@ void* t3_fun(void* arg) {
 
 void* idle(void* arg) {
     create_task("t1", t1_fun, 1);
-    create_task("t2", t2_fun, 1);
-    create_task("t3", t3_fun, 1);
+    create_task("t2", t2_fun, 2);
+    create_task("t3", t3_fun, 3);
 
     while (true) {
         printk("idle task running....\n");
@@ -97,7 +99,7 @@ void* idle(void* arg) {
 }
 
 void task_init() {
-    create_task("idle", idle, 1);
+    create_task("idle", idle, 0);
 }
 
 int inc_scheduling_times(task_t* task) {
