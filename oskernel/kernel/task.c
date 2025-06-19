@@ -68,8 +68,25 @@ void* t1_fun(void* arg) {
     }
 }
 
+void* t2_fun(void* arg) {
+    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t2: %d\n", i);
+
+    }
+}
+
+void* t3_fun(void* arg) {
+    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t3: %d\n", i);
+
+    }
+}
+
+
 void* idle(void* arg) {
     create_task("t1", t1_fun, 1);
+    create_task("t2", t2_fun, 1);
+    create_task("t3", t3_fun, 1);
 
     while (true) {
         printk("idle task running....\n");
