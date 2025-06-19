@@ -62,7 +62,10 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
 }
 
 void* t1_fun(void* arg) {
-    printk("t1\n");
+    for (int i = 0; i < 0xffffffff; ++i) {
+        printk("t1: %d\n", i);
+
+    }
 }
 
 void* idle(void* arg) {

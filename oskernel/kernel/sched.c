@@ -16,6 +16,9 @@ task_t* find_ready_taask() {
         task_t* task = tasks[i];
 
         if (NULL == task) continue;
+        if (current == task && TASK_RUNNING == task->state) {
+            task->state = TASK_READY;
+        }
         if (TASK_READY != task->state) continue;
 
         next = task;
