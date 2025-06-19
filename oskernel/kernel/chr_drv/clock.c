@@ -1,11 +1,13 @@
 #include "../../include/linux/kernel.h"
 #include "../../include/linux/traps.h"
+#include "../../include/asm/io.h";
+#include "../../include/linux/sched.h"
 
 #define PIT_CHAN0_REG 0X40
 #define PIT_CHAN2_REG 0X42
 #define PIT_CTRL_REG 0X43
 
-#define HZ 10000
+#define HZ 100
 #define OSCILLATOR 1193182
 #define CLOCK_COUNTER (OSCILLATOR / HZ)
 
@@ -23,5 +25,9 @@ void clock_init() {
 
 void clock_handler(int idt_index) {
     send_eoi(idt_index);
-    printk("0x%x\n", idt_index);
+//    printk("0x%x\n", idt_index);
+
+    cpu_tickes++;
+    do_timer();
+
 }

@@ -41,3 +41,7 @@ void sched() {
 
     switch_task(next);
 }
+
+void do_timer() {
+    sched();
+}

@@ -7,4 +7,6 @@
 
 void sched();
 
+void do_timer();
+
 #endif //MY_X86_OS_SCHED_H

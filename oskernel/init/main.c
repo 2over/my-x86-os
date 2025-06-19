@@ -12,27 +12,32 @@ void kernel_main(void) {
     gdt_init();
     idt_init();
     clock_init();
-    printk("cover os cool\n");
 
     print_check_memory_info();
-
     memory_init();
     memory_map_int();
 
-//    virtual_memory_init();
     task_init();
 
-    sched();
+    __asm__("sti;");
 
-    // 测试分配虚拟内存
-//    void* p = kmalloc(1);
-//    printk("0x%p\n", p);
-//
-//    kfree_s(p, 1);
-//
-//    kmalloc(100);
-    __asm__ ("sti;");
-
-//    int i = 10/ 0;
     while (true);
 }
+//void kernel_main(void) {
+//    console_init();
+//    gdt_init();
+//    idt_init();
+//    clock_init();
+//    printk("cover os cool\n");
+//
+//    print_check_memory_info();
+//
+//    memory_init();
+//    memory_map_int();
+//
+//    task_init();
+//
+//    __asm__ ("sti;");
+//
+//    while (true);
+//}
