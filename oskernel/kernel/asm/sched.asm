@@ -93,3 +93,37 @@ task_exit_handler:
     sti
     hlt
 
+; 栈
+; sched_task return address
+global sched_task
+sched_task:
+    xchg bx, bx
+    xchg bx, bx
+
+    push ecx
+
+    mov ecx, [current]
+    cmp ecx, 0
+    je .return
+
+    mov [ecx + 10 * 4], eax
+    mov [ecx + 12 * 4], edx
+    mov [ecx + 13 * 4], ebx
+    mov [ecx + 15 * 4], ebp
+    mov [ecx + 16 * 4], esi
+    mov [ecx + 17 * 4], edi
+
+    mov eax, [esp + 4]      ; eip
+    mov [ecx + 8 * 4], eax  ; tss.tip
+
+    mov eax, esp
+    add eax, 8
+
+    mov [ecx + 4], eax      ; tss.esp0
+
+    pop ecx
+    mov [ecx + 11 * 4], ecx
+
+.return:
+    call sched
+    ret

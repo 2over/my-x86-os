@@ -1,7 +1,8 @@
 #include "../../include/linux/kernel.h"
 #include "../../include/linux/traps.h"
-#include "../../include/asm/io.h";
+#include "../../include/asm/io.h"
 #include "../../include/linux/sched.h"
+#include "../../include/linux/task.h"
 
 #define PIT_CHAN0_REG 0X40
 #define PIT_CHAN2_REG 0X42
@@ -28,6 +29,8 @@ void clock_handler(int idt_index) {
 //    printk("0x%x\n", idt_index);
 
     cpu_tickes++;
+
+    task_wakeup();
     do_timer();
 
 }

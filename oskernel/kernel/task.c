@@ -8,6 +8,7 @@
 extern task_t* current;
 extern int jiffy;
 extern int cpu_tickes;
+extern void sched_task();
 
 task_t* tasks[NR_TASKS] = {0};
 
@@ -66,13 +67,14 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
 void* t1_fun(void* arg) {
     for (int i = 0; i < 0xffffffff; ++i) {
         printk("t1: %d\n", i);
-
+        task_sleep(1000);
     }
 }
 
 void* t2_fun(void* arg) {
     for (int i = 0; i < 0xffffffff; ++i) {
         printk("t2: %d\n", i);
+        task_sleep(500);
 
     }
 }
@@ -80,6 +82,8 @@ void* t2_fun(void* arg) {
 void* t3_fun(void* arg) {
     for (int i = 0; i < 0xffffffff; ++i) {
         printk("t3: %d\n", i);
+
+        task_sleep(300);
 
     }
 }
@@ -91,7 +95,7 @@ void* idle(void* arg) {
     create_task("t3", t3_fun, 3);
 
     while (true) {
-        printk("idle task running....\n");
+//        printk("idle task running....\n");
 
         __asm__ volatile ("sti;");
         __asm__ volatile ("hlt;");
@@ -148,6 +152,37 @@ void current_task_exit(int code) {
             current = NULL;
 
             break;
+        }
+    }
+}
+
+void task_sleep(int ms) {
+    CLI
+
+    if (NULL == current) {
+        printk("task sleep: current task is null\n");
+        return;
+    }
+
+    int ticks = ms / jiffy;
+    ticks += (0 == ms % jiffy) ? 0 : 1;
+
+    current->counter = cpu_tickes + ticks;
+    current->state = TASK_SLEEPING;
+
+    sched_task();
+}
+
+void task_wakeup() {
+    for (int i = 1; i < NR_TASKS; ++i) {
+        task_t* task = tasks[i];
+
+        if (NULL == task) continue;
+        if (TASK_SLEEPING != task->state) continue;
+
+        if (cpu_tickes >= task->counter) {
+            task->state = TASK_READY;
+            task->counter = task->priority;
         }
     }
 }
