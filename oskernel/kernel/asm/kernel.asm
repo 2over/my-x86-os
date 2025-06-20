@@ -46,9 +46,9 @@ move_to_user_mode:
 user_mode_handler:
     call user_mode
 
-    ; push 0
-    ; call _exit
-    ; add esp, 4
+    push 0
+    call _exit
+    add esp, 4
 
     ; 下面这两句正常请卡ung执行不到，一种保险策略
     sti

@@ -16,12 +16,9 @@ void user_mode() {
 
     int age = 10;
     char* str= "welcome";
-//    write(STDERR_FILENO, str, strlen(str));
 
     printf("%s, %d\n", str, 11);
 
-//    while(true);
-    _exit(0);
 }
 void kernel_main(void) {
     console_init();
