@@ -6,6 +6,8 @@
 #include "../include/linux/sched.h"
 #include "../include/unistd.h"
 #include "../include//string.h"
+#include "../include/stdio.h"
+#include "../include/stdlib.h"
 
 extern void clock_init();
 
@@ -14,9 +16,12 @@ void user_mode() {
 
     int age = 10;
     char* str= "welcome";
-    write(STDERR_FILENO, str, strlen(str));
+//    write(STDERR_FILENO, str, strlen(str));
 
-    while(true);
+    printf("%s, %d\n", str, 11);
+
+//    while(true);
+    _exit(0);
 }
 void kernel_main(void) {
     console_init();
