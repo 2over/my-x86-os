@@ -8,7 +8,7 @@
 extern task_t* current;
 
 void* system_call_table[SYSTEM_CALL_TABLE_SIZE] = {
-        sys_write, sys_exit
+        sys_write, sys_exit, sys_fork, sys_get_pid, sys_get_ppid
 };
 
 ssize_t sys_write(int fd, const void *buf, size_t count) {
@@ -19,4 +19,12 @@ int sys_exit(int status) {
     current_task_exit(status);
     sched();
     return 0;
+}
+
+pid_t sys_get_pid() {
+    return get_task_pid(current);
+}
+
+pid_t sys_get_ppid() {
+    return get_task_ppid(current);
 }

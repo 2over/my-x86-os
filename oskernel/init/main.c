@@ -12,24 +12,32 @@
 extern void clock_init();
 
 void user_mode() {
-//    __asm__("int 0x80");
-
-    int age = 10;
-    char* str= "welcome";
-
+    char* str = "welcome";
     printf("%s, %d\n", str, 11);
+    pid_t pid = fork();
+
+    if (pid > 0) {
+        printf("pid = %d, ppid= %d\n", getpid(), getppid());
+    } else if (0 == pid) {
+        printf("pid=%d, ppid=%d\n", getpid(), getppid());
+
+        for (int i = 0; i < 10; ++i) {
+            printf("%d\n", i);
+        }
+    }
 
 }
 void kernel_main(void) {
     console_init();
-    gdt_init();
-    idt_init();
+
     clock_init();
 
     print_check_memory_info();
     memory_init();
     memory_map_int();
 
+    gdt_init();
+    idt_init();
     task_init();
 
     __asm__("sti;");
