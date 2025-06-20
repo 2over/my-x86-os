@@ -1,5 +1,6 @@
 #include "../include/linux/kernel.h"
 #include "../include/linux/task.h"
+#include "../include/linux/sched.h"
 #include "../include/linux/mm.h"
 #include "../include/linux/sched.h"
 #include "../include/string.h"
@@ -9,6 +10,7 @@ extern task_t* current;
 extern int jiffy;
 extern int cpu_tickes;
 extern void sched_task();
+extern void move_to_user_mode();
 
 task_t* tasks[NR_TASKS] = {0};
 
@@ -50,7 +52,7 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
     // 加入tasks
     tasks[task->task.pid] = &(task->task);
 
-    task->task.tss.cr3 = (int)task + sizeof(task_t);
+    task->task.tss.cr3 = virtual_memory_init();
     task->task.tss.eip = fun;
 
     // r0 stack
@@ -59,40 +61,21 @@ task_t* create_task(char* name, task_fun_t fun, int priority) {
 
     task->task.tss.esp0 = task->task.esp0;
 
+    // r3 stack
+    task->task.esp3 = kmalloc(4096) + PAGE_SIZE;
+    task->task.ebp3 = task->task.esp3;
+
+    task->task.tss.esp = task->task.esp3;
+    task->task.tss.ebp = task->task.ebp3;
+
     task->task.state = TASK_READY;
 
     return task;
 }
 
-void* t1_fun(void* arg) {
-//    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t1: %d\n", 1);
-        task_sleep(1000);
-//    }
-}
-
-void* t2_fun(void* arg) {
-//    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t2: %d\n",2);
-        task_sleep(500);
-
-//    }
-}
-
-void* t3_fun(void* arg) {
-//    for (int i = 0; i < 0xffffffff; ++i) {
-        printk("t3: %d\n", 3);
-
-        task_sleep(300);
-
-//    }
-}
-
 
 void* idle(void* arg) {
-    create_task("t1", t1_fun, 4);
-    create_task("t2", t2_fun, 2);
-    create_task("t3", t3_fun, 3);
+    create_task("init", move_to_user_mode, 1);
 
     while (true) {
 //        printk("idle task running....\n");
@@ -185,4 +168,12 @@ void task_wakeup() {
             task->counter = task->priority;
         }
     }
+}
+
+int get_esp3(task_t* task) {
+    return task->esp3;
+}
+
+void set_esp3(task_t* task, int esp) {
+    task->tss.esp = esp;
 }
