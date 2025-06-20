@@ -4,12 +4,18 @@
 #include "../include/linux/mm.h"
 #include "../include/linux/task.h"
 #include "../include/linux/sched.h"
+#include "../include/unistd.h"
+#include "../include//string.h"
 
 extern void clock_init();
 
 void user_mode() {
-    __asm__("int 0x80");
+//    __asm__("int 0x80");
+
     int age = 10;
+    char* str= "welcome";
+    write(STDERR_FILENO, str, strlen(str));
+
     while(true);
 }
 void kernel_main(void) {
