@@ -28,6 +28,11 @@ int get_network_card_ba0() {
 
                     // class code为2表示是网卡设备
                     if (2 == class_code) {
+                        out_32(0xCF8, addr | (3 << 2));
+                        uint header_type = (in_32(0xCFC) & 0x00ff0000) >> 16;
+                        printk("vID: %04x dID: %04x, header_type: %04x\n",
+                               (v & 0xFFFF), (v & 0xFFFF0000) >> 16, header_type);
+
                         out_32(0xCF8, addr | (4 << 2));
                         ba0 = in_32(0xCFC);
 
@@ -38,7 +43,7 @@ int get_network_card_ba0() {
         }
     }
 
-    return ba0;
+    return ba0 & 0xffffff00;
 }
 void* kernel_thread(void* arg) {
     int ba0 = get_network_card_ba0();

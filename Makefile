@@ -83,7 +83,9 @@ qemu: all
 	qemu-system-i386 \
 	-m 32M \
 	-boot c \
-	-hda ./build/hd.img
+	-hda ./build/hd.img \
+	-net nic,model=ne2k_pci
+
 
 # 生成的内核镜像给VBox、VMware用
 vmdk: $(BUILD)/master.vmdk
