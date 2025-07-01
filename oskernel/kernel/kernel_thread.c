@@ -1,4 +1,5 @@
 #include "../include/linux/kernel.h"
+#include "../include/asm/io.h"
 
 /**
  * 获取网卡的base address 0
@@ -47,23 +48,6 @@ int get_network_card_ba0() {
 }
 
 /**
- * 初始化网卡
- */
-void network_card_init() {
-    unsigned int base_addr = get_network_card_ba0();
-
-
-    // 向CR寄存器写入: 00 100 0 01 表示: Page0, 网卡停止接收数据包
-    out_byte(base_addr, 0x21);
-
-    // 配置网卡相关寄存器, 我们只获取Mac地址，不发送/接收数据，不配置任何寄存器
-
-    // 初始化完成，开启网卡
-    // 向CR寄存器写入: 00 100 010, 表示:Page0, 网卡停止接收数据包
-    out_byte(base_addr, 0x22);
-}
-
-/**
  * 用于配置CR寄存器中的高两位，即控制Page
  * @param page: 取值: 0, 1, 2, 3
  */
@@ -84,6 +68,56 @@ void set_cr_page(uchar page) {
 }
 
 
+/**
+ * 初始化网卡
+ */
+void network_card_init() {
+    unsigned int base_addr = get_network_card_ba0();
+
+
+    // 向CR寄存器写入: 00 100 0 01 表示: Page0, 网卡停止接收数据包
+    out_byte(base_addr, 0x21);
+
+    // 配置网卡相关寄存器, 我们只获取Mac地址，不发送/接收数据，不配置任何寄存器
+
+    // 初始化完成，开启网卡
+    // 向CR寄存器写入: 00 100 010, 表示:Page0, 网卡停止接收数据包
+    out_byte(base_addr, 0x22);
+}
+
+void get_network_card_mac() {
+    int ba0 = get_network_card_ba0();
+
+    set_cr_page(0);
+
+    // 从dma的0x0000开始读取数据，因为mac地址在其前12个字节，所以从0x0000开始读取
+    out_byte(ba0 + 9, 0); // RSAR1: the high address of dma read
+    out_byte(ba0 + 8, 0); // RSAR0: the low address of dma read
+
+    // 一共读取0x000c个字节
+    out_byte(ba0 + 0x0b, 0); // RBCR1: the high bits of read count
+    out_byte(ba0 + 0xa, 0x0c); // RBCR0: the low bits of read count
+
+    // 向CR寄存器写入: 00 001 0 10, 表示Page0, Remote Read, Start Command
+    out_byte(ba0, 0x0a);
+}
+
+
 void* kernel_thread(void* arg) {
     network_card_init();
+
+    get_network_card_mac();
+
+    int ba0 = get_network_card_ba0();
+
+    printk("\n");
+    printk("Mac: ");
+
+    for (int i = 0; i < 6; i++) {
+        printk("%02x ", in_byte(ba0 + 0x10));
+
+        in_byte(ba0 + 0x10);
+    }
+
+    printk("\n\n");
 }
