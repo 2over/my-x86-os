@@ -45,23 +45,45 @@ int get_network_card_ba0() {
 
     return ba0 & 0xffffff00;
 }
-void* kernel_thread(void* arg) {
+
+/**
+ * 初始化网卡
+ */
+void network_card_init() {
+    unsigned int base_addr = get_network_card_ba0();
+
+
+    // 向CR寄存器写入: 00 100 0 01 表示: Page0, 网卡停止接收数据包
+    out_byte(base_addr, 0x21);
+
+    // 配置网卡相关寄存器, 我们只获取Mac地址，不发送/接收数据，不配置任何寄存器
+
+    // 初始化完成，开启网卡
+    // 向CR寄存器写入: 00 100 010, 表示:Page0, 网卡停止接收数据包
+    out_byte(base_addr, 0x22);
+}
+
+/**
+ * 用于配置CR寄存器中的高两位，即控制Page
+ * @param page: 取值: 0, 1, 2, 3
+ */
+void set_cr_page(uchar page) {
     int ba0 = get_network_card_ba0();
-    printk("base address 0 = 0x%08x\n", ba0);
 
-    // 尝试读写网卡的PAR2寄存器, 坐标Page1, No.3
+    if (page > 3) return;
 
-    // 1 让CR寄存器指向Page1
     uchar cr = in_byte(ba0);
-    printk("cr = 0x%x\n", cr);
 
-    cr |= 0b01000000;
+    printk("old cr0 = %x\n", cr);
+
+    cr &= 0x3f;
+    cr |= page << 6;
+
+    printk("new cr0 = %x\n", cr);
     out_byte(ba0, cr);
-    printk("cr = 0x%x\n", in_byte(ba0));
+}
 
-    // 读写PAR2
-    printk("par2 = 0x%x\n", in_byte(ba0 + 3));
 
-    out_byte(ba0 + 3, 1);
-    printk("par2 = 0x%x\n", in_byte(ba0 + 3));
+void* kernel_thread(void* arg) {
+    network_card_init();
 }
