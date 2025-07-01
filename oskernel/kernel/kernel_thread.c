@@ -49,8 +49,19 @@ void* kernel_thread(void* arg) {
     int ba0 = get_network_card_ba0();
     printk("base address 0 = 0x%08x\n", ba0);
 
+    // 尝试读写网卡的PAR2寄存器, 坐标Page1, No.3
+
+    // 1 让CR寄存器指向Page1
+    uchar cr = in_byte(ba0);
+    printk("cr = 0x%x\n", cr);
+
+    cr |= 0b01000000;
+    out_byte(ba0, cr);
     printk("cr = 0x%x\n", in_byte(ba0));
 
-    out_byte(ba0, 1);
-    printk("cr = 0x%x\n", in_byte(ba0));
+    // 读写PAR2
+    printk("par2 = 0x%x\n", in_byte(ba0 + 3));
+
+    out_byte(ba0 + 3, 1);
+    printk("par2 = 0x%x\n", in_byte(ba0 + 3));
 }
