@@ -19,7 +19,7 @@ all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin
 	bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $(BUILD)/$(HD_IMG_NAME)
 	dd if=${BUILD}/boot/boot.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=0 count=1 conv=notrunc
 	dd if=${BUILD}/boot/setup.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=1 count=2 conv=notrunc
-	dd if=${BUILD}/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=3 count=60 conv=notrunc
+	dd if=${BUILD}/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=3 count=100 conv=notrunc
 
 ${BUILD}/system.bin: ${BUILD}/kernel.bin
 	objcopy -O binary ${BUILD}/kernel.bin ${BUILD}/system.bin
@@ -31,7 +31,8 @@ ${BUILD}/kernel.bin: ${BUILD}/boot/head.o ${BUILD}/init/main.o ${BUILD}/kernel/a
     ${BUILD}/kernel/asm/clock_handler.o ${BUILD}/kernel/chr_drv/clock.o ${BUILD}/mm/memory.o ${BUILD}/kernel/kernel.o \
     ${BUILD}/mm/mm_101012.o ${BUILD}/kernel/task.o ${BUILD}/kernel/sched.o ${BUILD}/mm/malloc.o ${BUILD}/kernel/asm/sched.o \
     ${BUILD}/kernel/asm/kernel.o ${BUILD}/kernel/system_call.o ${BUILD}/lib/write.o ${BUILD}/lib/error.o ${BUILD}/kernel/system_call.o \
-	${BUILD}/lib/stdio.o ${BUILD}/lib/stdlib.o ${BUILD}/kernel/asm/system_call.o ${BUILD}/lib/unistd.o ${BUILD}/kernel/asm/unistd.o
+	${BUILD}/lib/stdio.o ${BUILD}/lib/stdlib.o ${BUILD}/kernel/asm/system_call.o ${BUILD}/lib/unistd.o ${BUILD}/kernel/asm/unistd.o \
+	${BUILD}/kernel/kernel_thread.o
 	ld -m elf_i386 $^ -o $@ -Ttext 0x1200
 
 ${BUILD}/mm/%.o: oskernel/mm/%.c

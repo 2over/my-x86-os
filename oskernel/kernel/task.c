@@ -11,6 +11,7 @@ extern int jiffy;
 extern int cpu_tickes;
 extern void sched_task();
 extern void move_to_user_mode();
+extern void* kernel_thread(void*);
 
 task_t* tasks[NR_TASKS] = {0};
 
@@ -132,7 +133,9 @@ task_t* create_child(char* name, task_fun_t fun, int priority) {
 
 
 void* idle(void* arg) {
-    create_task("init", move_to_user_mode, 1);
+//    create_task("init", move_to_user_mode, 1);
+
+    create_task("init", kernel_thread, 1);
 
     while (true) {
 //        printk("idle task running....\n");

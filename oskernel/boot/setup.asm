@@ -169,7 +169,7 @@ protected_mode:
     ; 将内核读入内存
     mov edi, KERNEL_ADDR
     mov ecx, 3
-    mov bl, 60
+    mov bl, 100
     call read_hd
 
     jmp CODE_SELECTOR:KERNEL_ADDR
