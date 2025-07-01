@@ -52,3 +52,28 @@ out_word:
 
     leave
     ret
+
+global in_32
+in_32:
+    push ebp
+    mov ebp, esp
+
+    xor eax, eax
+
+    mov edx, [ebp + 8]      ; port
+    in eax, dx
+
+    leave
+    ret
+
+global out_32
+out_32:
+    push ebp
+    mov ebp, esp
+
+    mov edx, [ebp + 8]      ; port
+    mov eax, [ebp + 12]     ; value
+    out dx, eax
+
+    leave
+    ret
