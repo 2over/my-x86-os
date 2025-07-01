@@ -16,7 +16,18 @@ void* kernel_thread(void* arg) {
 
                 // 返回结果不是01xffff, 就说明那个位置有设备存在
                 if (((v & 0xFFFF) != 0xFFFF) && (v != 0)) {
-                    printk("bus: %02d dev: %02d fun: %02d\n", bus, dev, fun);
+                    printk("bus: %02d dev: %02d fun: %02d", bus, dev, fun);
+
+                    out_32(0xCF8, addr | (3 << 2));
+                    uint header_type = (in_32(0xCFC) & 0x00ff0000) >> 16;
+
+                    out_32(0xCF8, addr | (2 << 2));
+                    unsigned int class_code = (in_32(0xCFC) & 0xff000000) >> 24;
+
+                    printk("vID: %04x  dID: %04x, header_type: %04x, class_code:%04x\n",
+                           (v & 0xFFFF), (v & 0xFFFF0000) >> 16, header_type, class_code);
+
+                    printk("\n---------------------------------------------------------------\n");
                 }
             }
         }
