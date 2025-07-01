@@ -47,5 +47,10 @@ int get_network_card_ba0() {
 }
 void* kernel_thread(void* arg) {
     int ba0 = get_network_card_ba0();
-    printk("%x\n", ba0);
+    printk("base address 0 = 0x%08x\n", ba0);
+
+    printk("cr = 0x%x\n", in_byte(ba0));
+
+    out_byte(ba0, 1);
+    printk("cr = 0x%x\n", in_byte(ba0));
 }
