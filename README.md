@@ -14,3 +14,7 @@
 
 # CPU响应中断的流程(单核)
 ![image](https://github.com/user-attachments/assets/d33a98ad-f942-438d-a475-983f2ea8fe06)
+
+# 任务切换堆栈图
+![image](https://github.com/user-attachments/assets/14a5fb0c-9ce8-4464-9fc9-5cdcce7eb7d2)
+
